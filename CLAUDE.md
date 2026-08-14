@@ -104,5 +104,37 @@ cedeiq-mvp/
 
 ## 8. MCP / Tools in Use
 
-- GitHub MCP — repo, issue, and PR awareness
-- (Add DB or filesystem MCP here once configured)
+- **GitHub MCP** — configured in `.mcp.json` at the repo root. Once connected
+  (via `GITHUB_PERSONAL_ACCESS_TOKEN`), gives Claude Code direct awareness of
+  this repo's issues, PRs, and commit history — e.g. "check open issues before
+  planning the next module" becomes possible without manually pasting context.
+- Add further MCP servers here as they're wired in (e.g. a Postgres/SQLite
+  MCP for direct DB inspection during development).
+
+## 9. Skills
+
+- `skills/cedeiq-endpoint-pattern/SKILL.md` — encodes this project's
+  established router → schema → service → audit-log pattern so new endpoints
+  stay consistent with existing ones. Reference this before adding any new
+  route.
+
+## 10. Subagents
+
+- `.claude/agents/treaty-rules-agent.md` — scoped to `app/services/`
+- `.claude/agents/dashboard-agent.md` — scoped to `dashboard/`
+- `.claude/agents/test-writer-agent.md` — scoped to `backend/tests/`
+- Configured, not yet exercised live in a Claude Code session (CLI budget
+  constraint — see docs/daily-log.md).
+
+## 11. Hooks
+
+- `.claude/settings.json` configures:
+  - **PreToolUse** on Bash calls → `.claude/hooks/guard_dangerous_bash.py`,
+    which blocks destructive commands (force-push, `rm -rf`, dropping the
+    DB) before they execute. Unit-tested standalone (feed it JSON on stdin)
+    and confirmed to correctly block/allow — see docs/daily-log.md.
+  - **PostToolUse** on Edit/Write → runs the pytest suite automatically
+    after any file change.
+  - **Stop** → reminds to update the daily log when a session ends.
+- Like Subagents, configured and independently verified, but not yet run
+  inside a live Claude Code session end-to-end.
